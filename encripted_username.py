@@ -24,7 +24,7 @@ st.write("DB username:", st.secrets["db_username"])
 #     config['cookie']['expiry_days'],
 #     config['preauthorized']
 # )
-st.title("User Logs Extractor")
+st.title("Userss Logs Extractor")
 st.divider()
 st.subheader("Select date and time")
 
