@@ -11,31 +11,33 @@ import datetime
 import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
-
-st.write("DB username:", st.secrets["db_username"])
+ 
+st.write("DB username:", st.secrets.connections.mysql.password)
+st.write("DB :", **st.secrets.connections.mysql)
+my_db = st.connection('mysql', type='sql')
 # with open('../config.yaml') as file:
 #     config = yaml.load(file, Loader=SafeLoader)
 # # hashed_passwords = stauth.Hasher(['abc', 'def']).generate()
-# # print(hashed_passwords)
+# # print(hashed_passwords)  
 # authenticator = Authenticate(
 #     config['credentials'],
 #     config['cookie']['name'],
-#     config['cookie']['key'],
+#     config['cookie']['key'], 
 #     config['cookie']['expiry_days'],
 #     config['preauthorized']
 # )
-st.title("Userss Logs Extractor")
+st.title("Users Logs Extractor")
 st.divider()
 st.subheader("Select date and time")
 
-#Date and time
+#Date and time 
 col1, col2 = st.columns((1,1))
 with col1:
-    first_date = st.date_input("Start date",None ,None ,datetime.datetime.now())
+    first_date = st.date_input("Start date","today" ,None ,datetime.datetime.now())
     first_date_time = st.time_input('Start time', datetime.time(8, 45))
 
 with col2:
-    end_date = st.date_input("End date",None ,first_date,datetime.datetime.now())
+    end_date = st.date_input("End date","today",None ,first_date,datetime.datetime.now())
     end_date_time = st.time_input('End time', datetime.time(8, 45))
 
 first_day_result = first_date.strftime("%m/%d/%Y")+"T"+first_date_time.strftime("%H:%M:%S")+"Z"
