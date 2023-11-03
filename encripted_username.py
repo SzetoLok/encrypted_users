@@ -15,17 +15,10 @@ from yaml.loader import SafeLoader
 st.write("DB username:", st.secrets.connections.mysql.password)
 st.write("DB :", **st.secrets.connections.mysql)
 my_db = st.connection('mysql', type='sql')
-# with open('../config.yaml') as file:
-#     config = yaml.load(file, Loader=SafeLoader)
-# # hashed_passwords = stauth.Hasher(['abc', 'def']).generate()
-# # print(hashed_passwords)  
-# authenticator = Authenticate(
-#     config['credentials'],
-#     config['cookie']['name'],
-#     config['cookie']['key'], 
-#     config['cookie']['expiry_days'],
-#     config['preauthorized']
-# )
+df = my_db.query('SELECT * from client1;', ttl=600)
+for row in df.itertuples():
+    st.write(f"{row.id}, {row.username}, {row.email}")
+
 st.title("Users Logs Extractor")
 st.divider()
 st.subheader("Select date and time")
@@ -92,15 +85,17 @@ def main():
     if 'filter' not in st.session_state:
         st.session_state.filter= ""
     keywords = st.session_state.filter.replace(" ","")
-    command ="Select * from CLIENT1 WHERE email NOT LIKE '%old%'"
+   
+    command ="Select * from CLIENT1 WHERE email LIKE '%%'"
     if len(keywords) == 0:
         mycursor.execute(command)
-    else:
+    else:   
         keywords = '%'+keywords+'%'
         command +="and email LIKE %s ;"
         mycursor.execute(command,(keywords, ))
+    
 
-    print(command, keywords)
+    print(command, keywords) 
     
     email, page = st.columns((4,1))
     with email:
@@ -117,7 +112,7 @@ def main():
             'email': x[3] 
         })
     # mycursor.execute("Show tables")
-    
+
     df_mysql_users= pd.DataFrame(mysql_users)
     gridoptions = GridOptionsBuilder.from_dataframe(df_mysql_users)
     gridoptions.configure_selection(selection_mode='multiple', use_checkbox=True, pre_selected_rows=mysql_users)
